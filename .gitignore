@@ -1,4 +1,19 @@
 /.bundle/
+<<<<<<< HEAD
+||||||| parent of f51a380 (added filters api and changed firewall rules to be actually firewall access rules)
+/.yardoc
+/gems.locked
+/_yardoc/
+/coverage/
+/doc/
+=======
+/.idea/
+/.yardoc
+/gems.locked
+/_yardoc/
+/coverage/
+/doc/
+>>>>>>> f51a380 (added filters api and changed firewall rules to be actually firewall access rules)
 /pkg/
 /gems.locked
 /.covered.db

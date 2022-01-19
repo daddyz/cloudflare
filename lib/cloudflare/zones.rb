@@ -15,10 +15,11 @@
 require_relative "representation"
 require_relative "paginate"
 
-require_relative "custom_hostnames"
-require_relative "firewall"
-require_relative "dns"
-require_relative "logs"
+require_relative 'custom_hostnames'
+require_relative 'firewall'
+require_relative 'dns'
+require_relative 'logs'
+require_relative 'filter'
 
 module Cloudflare
 	class Zone < Representation
@@ -33,9 +34,21 @@ module Cloudflare
 		end
 		
 		def firewall_rules
-			self.with(Firewall::Rules, path: "firewall/access_rules/rules")
+			self.with(Firewall::Rules, path: 'firewall/access_rules/rules')
+                end
+
+                def firewall_access_rules
+			self.with(Firewall::AccessRules, path: 'firewall/access_rules/rules')
 		end
 		
+		def firewall_rules
+			self.with(Firewall::Rules, path: 'firewall/rules')
+		end
+
+		def filters
+			self.with(Filter::Filters, path: 'filters')
+		end
+
 		def logs
 			self.with(Logs::Received, path: "logs/received")
 		end
