@@ -61,14 +61,13 @@ module Cloudflare
 			end
 
 			def update(id, expression, description, ref)
-				message = self.put({
-					id: id,
-					expression: expression.to_s,
-					description: description,
-					ref: ref
-				})
-
-				represent_message(message)
+				self.with(Filter, path: "#{id}").put({
+																								id: id,
+																								expression: expression.to_s,
+																								description: description,
+																								ref: ref
+																							})
+				self
 			end
 		end
 	end
