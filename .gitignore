@@ -1,15 +1,27 @@
 /.bundle/
+<<<<<<< HEAD
+/.idea/
+||||||| 2dcc737
+=======
+<<<<<<< HEAD
+||||||| parent of f51a380 (added filters api and changed firewall rules to be actually firewall access rules)
+>>>>>>> socketry-main
+/.yardoc
+/gems.locked
+/_yardoc/
+/coverage/
+/doc/
+=======
 /.idea/
 /.yardoc
 /gems.locked
 /_yardoc/
 /coverage/
 /doc/
+>>>>>>> f51a380 (added filters api and changed firewall rules to be actually firewall access rules)
 /pkg/
-/spec/reports/
-/tmp/
+/gems.locked
+/.covered.db
+/external
 
-# rspec failure tracking
-.rspec_status
-.covered.db
-.env
+/.env

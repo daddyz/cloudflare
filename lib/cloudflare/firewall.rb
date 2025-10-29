@@ -1,61 +1,46 @@
 # frozen_string_literal: true
 
-# Copyright, 2018, by Samuel G. D. Williams. <http://www.codeotaku.com>
-#
-# Permission is hereby granted, free of charge, to any person obtaining a copy
-# of this software and associated documentation files (the "Software"), to deal
-# in the Software without restriction, including without limitation the rights
-# to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-# copies of the Software, and to permit persons to whom the Software is
-# furnished to do so, subject to the following conditions:
-#
-# The above copyright notice and this permission notice shall be included in
-# all copies or substantial portions of the Software.
-#
-# THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-# IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-# FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-# AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-# LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-# OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-# THE SOFTWARE.
+# Released under the MIT License.
+# Copyright, 2019-2024, by Samuel Williams.
+# Copyright, 2019, by Rob Widmer.
 
-require_relative 'representation'
-require_relative 'paginate'
+require_relative "representation"
+require_relative "paginate"
 
 module Cloudflare
 	module Firewall
 		class Rule < Representation
-			ACTIONS = %w(block challenge js_challenge allow log bypass).freeze
+
+                        ACTIONS = %w(block challenge js_challenge allow log bypass).freeze
 			PRODUCTS = %w(zoneLockdown uaBlock bic hot securityLevel rateLimit waf *).freeze
 
 			def action
-				value[:action]
+				result[:action]
 			end
 
 			# valid values: zoneLockdown, uaBlock, bic, hot, securityLevel, rateLimit, waf
 			def products
-				value[:products]
+				result[:products]
 			end
 
 			def priority
-				value[:priority]
+				result[:priority]
 			end
 
 			def paused
-				value[:paused]
+				result[:paused]
 			end
 
 			def description
-				value[:description]
+				result[:description]
 			end
 
 			def ref
-				value[:ref]
+				result[:ref]
 			end
 
 			def filter
-				value[:filter]
+				result[:filter]
 			end
 
 			def to_s
@@ -96,15 +81,41 @@ module Cloudflare
 
 		class AccessRule < Representation
 			def mode
-				value[:mode]
+				result[:mode]
+                        end
+
+                        include Async::REST::Representation::Mutable
+			
+			ACTIONS = %w(block challenge js_challenge allow log bypass).freeze
+			PRODUCTS = %w(zoneLockdown uaBlock bic hot securityLevel rateLimit waf *).freeze
+
+			def action
+				result[:action]
 			end
 
-			def notes
-				value[:notes]
+			# valid values: zoneLockdown, uaBlock, bic, hot, securityLevel, rateLimit, waf
+			def products
+				result[:products]
 			end
 
-			def configuration
-				value[:configuration]
+			def priority
+				result[:priority]
+			end
+
+			def paused
+				result[:paused]
+			end
+
+			def description
+				result[:description]
+			end
+
+			def ref
+				result[:ref]
+			end
+
+			def filter
+				result[:filter]
 			end
 
 			def to_s
@@ -119,16 +130,20 @@ module Cloudflare
 				AccessRule
 			end
 
-			def set(mode, value, notes: nil, target: 'ip')
+			def set(description, action, ref, filter, products = ['*'], priority = 0, paused = false)
+				raise "Unknown Action #{action}" unless Rule::ACTIONS.include?(action)
+				raise "Unknown products #{products}" unless (products - Rule::PRODUCTS).size > 0
+
 				notes ||= "cloudflare gem [#{mode}] #{Time.now.strftime('%m/%d/%y')}"
 
 				message = self.post({
-					mode: mode.to_s,
-					notes: notes,
-					configuration: {
-						target: target,
-						value: value.to_s,
-					}
+					description: description,
+					action: action,
+					ref: ref,
+					filter: filter,
+					products: products,
+					priority: priority,
+					paused: paused
 				})
 
 				represent_message(message)
@@ -138,5 +153,6 @@ module Cloudflare
 				each(configuration_value: value, &block)
 			end
 		end
+
 	end
 end
