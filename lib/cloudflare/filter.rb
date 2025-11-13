@@ -26,22 +26,42 @@ require_relative 'paginate'
 module Cloudflare
 	module Filter
 		class Filter < Representation
+      include Async::REST::Representation::Mutable
+
 			def expression
-				result[:expression]
+				value[:expression]
 			end
 
 			def id
-				result[:id]
+				value[:id]
 			end
 
 			def description
-				result[:description]
+				value[:description]
 			end
 
 			def ref
-				result[:ref]
-			end
-		end
+				value[:ref]
+      end
+
+      def update_expression(expression, **options)
+        self.class.put(@resource, {
+          expression: expression,
+          description: self.description,
+          **options
+        }) do |resource, response|
+          if response.success?
+            @value = response.read
+            @metadata = response.headers
+          else
+            raise RequestError.new(resource, response.read)
+          end
+
+          self
+        end
+      end
+
+    end
 
 		class Filters < Representation
 			include Paginate
@@ -61,6 +81,7 @@ module Cloudflare
 			end
 
 			def update(id, expression, description, ref)
+        # zone.filters.update(filter.id, expression, filter.description, filter.ref)
 				self.with(Filter, path: "#{id}").put({
 																								id: id,
 																								expression: expression.to_s,
@@ -72,3 +93,4 @@ module Cloudflare
 		end
 	end
 end
+
