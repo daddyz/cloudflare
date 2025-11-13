@@ -27,19 +27,19 @@ module Cloudflare
 	module Filter
 		class Filter < Representation
 			def expression
-				value[:expression]
+				result[:expression]
 			end
 
 			def id
-				value[:id]
+				result[:id]
 			end
 
 			def description
-				value[:description]
+				result[:description]
 			end
 
 			def ref
-				value[:ref]
+				result[:ref]
 			end
 		end
 
